@@ -1,24 +1,32 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from "react";
+import "./App.css";
+import Navbar from "./components/Navbar";
+import SalatInfo from "./components/SalatInfo/SalatInfo";
+import axios from "axios";
 
 function App() {
+  const [data, setData] = useState(null);
+  const fetchData = async () => {
+    const endpoint = "http://www.islamicfinder.us/index.php/api/prayer_times";
+    const country = "DZ";
+    const zipCode = "16000";
+    try {
+      const response = await axios.get(
+        `${endpoint}?country=${country}&zipcode=${zipCode}&time_format=0`
+      );
+      setData(response.data.results);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <Navbar />
+      <SalatInfo data={data} />
     </div>
   );
 }
